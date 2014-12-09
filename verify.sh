@@ -14,6 +14,12 @@
 # sumfiles to the same directory. If the file you're attempting to verify comes
 # with a sumfile instead of a per-file signature, make sure to grab both the
 # sumfile and its signature (e.g. SHA512SUM.asc).
+#
+# Example usage:
+#   wget ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/34.0/SHA512SUMS \
+#     ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/34.0/SHA512SUMS.asc \
+#     ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/34.0/linux-x86_64/en-US/firefox-34.0.tar.bz2
+#   verify.sh firefox-34.0.tar.bz2
 TARGET_FILE="$1"
 TARGET_DIR="`dirname $TARGET_FILE`"
 TARGET_BASE="`basename $TARGET_FILE`"
