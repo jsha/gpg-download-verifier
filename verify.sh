@@ -20,6 +20,8 @@
 #     ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/34.0/SHA512SUMS.asc \
 #     ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/34.0/linux-x86_64/en-US/firefox-34.0.tar.bz2
 #   verify.sh firefox-34.0.tar.bz2
+#
+# Prerequisite: You must have gnupg-curl installed to fetch keys over HKPS.
 TARGET_FILE="$1"
 TARGET_DIR="`dirname $TARGET_FILE`"
 TARGET_BASE="`basename $TARGET_FILE`"
@@ -95,6 +97,8 @@ fi
 
 if gpg $OPTIONS $EXTRA_OPTIONS --verify "$TARGET_SIG" "$TARGET_FILE" ; then
   echo VERIFIED
+  exit 0
 else
   echo NOT VERIFIED
+  exit 1
 fi
