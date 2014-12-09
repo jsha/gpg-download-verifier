@@ -73,9 +73,11 @@ if [ -z "$TARGET_SIG" ] ; then
   exit 1
 fi
 
-# Options common to all invocations of gpg.
+# Options common to all invocations of gpg. Use a specific keyserver rather than
+# the entire sks-keyservers.net pool to be slightly more robust against a purely
+# local network attack.
 OPTIONS="
-  --keyserver hkps://hkps.pool.sks-keyservers.net \
+  --keyserver hkps://sks.openpgp-keyserver.de \
   --keyserver-options ca-cert-file="`dirname $0`/sks-keyservers.netCA.pem" \
   --keyserver-options no-honor-keyserver-url \
 "
