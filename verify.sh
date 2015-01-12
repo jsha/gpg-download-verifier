@@ -27,7 +27,7 @@ TARGET_DIR="`dirname $TARGET_FILE`"
 TARGET_BASE="`basename $TARGET_FILE`"
 PACKAGE_NAME="`echo "$TARGET_FILE" | perl -pe 's+.*/++; s+[^[:alnum:]].*++'`"
 
-if [[ "$TARGET_FILE" =~ ".(asc|sig)" ]] ; then
+if [[ "$TARGET_FILE" =~ .(asc|sig) ]] ; then
   echo "Call this with the filename of a download, not a signature file."
   exit 1
 fi
