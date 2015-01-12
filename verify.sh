@@ -89,9 +89,7 @@ OPTIONS="
 export GNUPGHOME=~/.gpg-download-verifier/$PACKAGE_NAME
 if [ ! -d $GNUPGHOME ] ; then
   # First invocation for this package. Create GNUPGHOME and fetch the key.
-  mkdir -p $GNUPGHOME
-  chmod 0700 $GNUPGHOME
-
+  install -m 0700 -d ${GNUPGHOME}
   EXTRA_OPTIONS="--keyserver-options auto-key-retrieve"
 else
   EXTRA_OPTIONS="--trust-model=always"
