@@ -23,9 +23,9 @@
 #
 # Prerequisite: You must have gnupg-curl installed to fetch keys over HKPS.
 TARGET_FILE="$1"
-TARGET_DIR="`dirname $TARGET_FILE`"
-TARGET_BASE="`basename $TARGET_FILE`"
-PACKAGE_NAME="`echo "$TARGET_FILE" | perl -pe 's+.*/++; s+[^[:alnum:]].*++'`"
+TARGET_DIR="$(dirname ${TARGET_FILE})"
+TARGET_BASE="$(basename ${TARGET_FILE})"
+PACKAGE_NAME="$(echo "${TARGET_FILE}" | perl -pe 's|.*/||; s|[^[:alnum:]].*||')"
 
 err () {
   echo "$*" >&2
@@ -48,23 +48,23 @@ verify_hash () {
 }
 
 # Look for all types of signature: Direct signature or various sumfiles.
-if [ -f "${TARGET_FILE}.sig" ] ; then
+if [[ -f "${TARGET_FILE}.sig" ]]; then
   TARGET_SIG="${TARGET_FILE}.sig"
-elif [ -f "${TARGET_FILE}.asc" ] ; then
+elif [[ -f "${TARGET_FILE}.asc" ]]; then
   TARGET_SIG="${TARGET_FILE}.asc"
 else
-  for HASH in SHA512 SHA256 SHA1 MD5 ; do
-    for SUMFILE in "$TARGET_DIR"/"$HASH"* ; do
+  for HASH in SHA512 SHA256 SHA1 MD5; do
+    for SUMFILE in "${TARGET_DIR}"/"${HASH}"*; do
       # If our file is listed by name in the sumfile, and its appropriate hash
       # matches the sumfile contents, we can move on to verifying the signature
       # on the sumfile.
-      if grep -q "$TARGET_BASE" "$SUMFILE" && \
-        verify_hash "$HASH" "$SUMFILE" "$TARGET_FILE"; then
+      if grep -q "${TARGET_BASE}" "${SUMFILE}" && \
+        verify_hash "${HASH}" "${SUMFILE}" "${TARGET_FILE}"; then
         TARGET_FILE="${SUMFILE}"
         for SIG in "${SUMFILE}.sig" "${SUMFILE}.asc" \
-          "$(basename $SUMFILE .txt).sig" "$(basename $SUMFILE .txt).asc" ; do
-          if [ -f "$SIG" ] ; then
-            TARGET_SIG="$SIG"
+          "$(basename $SUMFILE .txt).sig" "$(basename $SUMFILE .txt).asc"; do
+          if [[ -f "${SIG}" ]]; then
+            TARGET_SIG="${SIG}"
             break 3
           fi
         done
@@ -82,12 +82,12 @@ fi
 # local network attack.
 OPTIONS="
   --keyserver hkps://sks.openpgp-keyserver.de \
-  --keyserver-options ca-cert-file="`dirname $0`/sks-keyservers.netCA.pem" \
+  --keyserver-options ca-cert-file="$(dirname $0)/sks-keyservers.netCA.pem" \
   --keyserver-options no-honor-keyserver-url \
 "
 
-export GNUPGHOME=~/.gpg-download-verifier/$PACKAGE_NAME
-if [ ! -d $GNUPGHOME ] ; then
+export GNUPGHOME=~/.gpg-download-verifier/${PACKAGE_NAME}
+if [[ ! -d ${GNUPGHOME} ]]; then
   # First invocation for this package. Create GNUPGHOME and fetch the key.
   install -m 0700 -d ${GNUPGHOME}
   EXTRA_OPTIONS="--keyserver-options auto-key-retrieve"
@@ -95,9 +95,8 @@ else
   EXTRA_OPTIONS="--trust-model=always"
 fi
 
-if gpg $OPTIONS $EXTRA_OPTIONS --verify "$TARGET_SIG" "$TARGET_FILE" ; then
-  echo VERIFIED
-  exit 0
+if gpg ${OPTIONS} ${EXTRA_OPTIONS} --verify "${TARGET_SIG}" "${TARGET_FILE}"; then
+  echo "VERIFIED"
 else
   err "NOT VERIFIED"
 fi
