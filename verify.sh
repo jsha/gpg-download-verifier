@@ -39,13 +39,12 @@ fi
 # Given the name of a hash function (e.g. SHA512), a sumfile containing hashes
 # of that type, and a file to be verified, run that hash function over the file
 # and see if the result exists in the sumfile.
-verify_hash() {
+verify_hash () {
   HASH="$1"
   SUMFILE="$2"
   TARGET_FILE="$3"
-  HASH_COMMAND="`echo $HASH | tr A-Z a-z`"
-  OUTPUT="`${HASH_COMMAND}sum $TARGET_FILE | cut -d' ' -f1`"
-  grep "$OUTPUT" "$SUMFILE"
+  OUTPUT=$(openssl dgst -${HASH} ${TARGET_FILE} | cut -d ' ' -f 2)
+  grep -i "${OUTPUT}" "${SUMFILE}"
 }
 
 # Look for all types of signature: Direct signature or various sumfiles.
