@@ -27,9 +27,13 @@ TARGET_DIR="`dirname $TARGET_FILE`"
 TARGET_BASE="`basename $TARGET_FILE`"
 PACKAGE_NAME="`echo "$TARGET_FILE" | perl -pe 's+.*/++; s+[^[:alnum:]].*++'`"
 
-if [[ "$TARGET_FILE" =~ .(asc|sig) ]] ; then
-  echo "Call this with the filename of a download, not a signature file."
+err () {
+  echo "$*" >&2
   exit 1
+}
+
+if [[ "$TARGET_FILE" =~ .(asc|sig) ]]; then
+  err "Call this with the filename of a download, not a signature file."
 fi
 
 # Given the name of a hash function (e.g. SHA512), a sumfile containing hashes
@@ -70,9 +74,8 @@ else
   done
 fi
 
-if [ -z "$TARGET_SIG" ] ; then
-  echo "Didn't find signature file or SHA*SUMS (+SHA*SUMS.asc). Need to download?"
-  exit 1
+if [[ -z "${TARGET_SIG}" ]]; then
+  err "Didn't find signature file or SHA*SUMS (+SHA*SUMS.asc). Need to download?"
 fi
 
 # Options common to all invocations of gpg. Use a specific keyserver rather than
@@ -99,6 +102,5 @@ if gpg $OPTIONS $EXTRA_OPTIONS --verify "$TARGET_SIG" "$TARGET_FILE" ; then
   echo VERIFIED
   exit 0
 else
-  echo NOT VERIFIED
-  exit 1
+  err "NOT VERIFIED"
 fi
