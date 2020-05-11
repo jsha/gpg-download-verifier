@@ -77,15 +77,6 @@ if [[ -z "${TARGET_SIG}" ]]; then
   err "Didn't find signature file or SHA*SUMS (+SHA*SUMS.asc). Need to download?"
 fi
 
-# Options common to all invocations of gpg. Use a specific keyserver rather than
-# the entire sks-keyservers.net pool to be slightly more robust against a purely
-# local network attack.
-OPTIONS="
-  --keyserver hkps://sks.openpgp-keyserver.de \
-  --keyserver-options ca-cert-file="$(dirname $0)/sks-keyservers.netCA.pem" \
-  --keyserver-options no-honor-keyserver-url \
-"
-
 export GNUPGHOME=~/.gpg-download-verifier/${PACKAGE_NAME}
 if [[ ! -d ${GNUPGHOME} ]]; then
   # First invocation for this package. Create GNUPGHOME and fetch the key.
